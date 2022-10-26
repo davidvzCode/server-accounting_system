@@ -6,10 +6,16 @@ const stateInitial = Joi.boolean()
 const date = Joi.date()
 const beneficiary = Joi.string()
 const dniRuc = Joi.string().min(10)
-const sum = Joi.numeric()
+const sum = Joi.string()
 const concept = Joi.string()
 const bank = Joi.string()
-const total = Joi.number()
+const total = Joi.number().integer()
+
+//
+const typeAccount = Joi.string()
+const value = Joi.number().integer()
+const accountId = Joi.number().integer()
+const voucherId = Joi.number().integer()
 
 const createVoucherSchema = Joi.object({
     typeVoucher: typeVoucher.required(),
@@ -39,4 +45,16 @@ const getVoucherSchema = Joi.object({
     id: id.required(),
 })
 
-module.exports = { createVoucherSchema, getVoucherSchema, updateVoucherSchema }
+const addItemSchema = Joi.object({
+    typeAccount: typeAccount.required(),
+    value: value.required(),
+    accountId: accountId.required(),
+    voucherId: voucherId.required(),
+})
+
+module.exports = {
+    createVoucherSchema,
+    getVoucherSchema,
+    updateVoucherSchema,
+    addItemSchema,
+}
