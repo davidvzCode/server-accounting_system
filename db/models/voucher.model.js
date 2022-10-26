@@ -14,7 +14,7 @@ const VoucherSchema = {
         allowNull: false,
         type: DataTypes.STRING,
     },
-    state_initial: {
+    stateInitial: {
         field: 'state_initial',
         allowNull: false,
         type: DataTypes.BOOLEAN,
@@ -58,17 +58,21 @@ const VoucherSchema = {
 
 class Voucher extends Model {
     static associate(models) {
-        this.hasMany(models.DetailVoucher, {
-            as: 'detailvouchers',
-            foreignKey: 'detailVoucherId',
+        this.belongsToMany(models.Account, {
+            as: 'items_accounts',
+            through: models.VoucherAccount,
+            foreignKey: 'voucherId',
+            otherKey: 'accountId',
         })
-        this.hasMany(models.Daybook, {
+        this.belongsToMany(models.Payment, {
+            as: 'items_payments',
+            through: models.PaymentVoucher,
+            foreignKey: 'voucherId',
+            otherKey: 'paymentId',
+        })
+        this.hasOne(models.Daybook, {
             as: 'daybooks',
-            foreignKey: 'daybookId',
-        })
-        this.hasMany(models.PaymentVoucher, {
-            as: 'paymentvouchers',
-            foreignKey: 'paymentVoucherId',
+            foreignKey: 'voucherId',
         })
     }
 

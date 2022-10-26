@@ -26,11 +26,11 @@ const UserSchema = {
     role: {
         allowNull: false,
         type: DataTypes.STRING,
-        defaultValue: 'customer',
+        defaultValue: 'user',
     },
     urlPerfil: {
         field: 'url_perfil',
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING,
     },
     createdAt: {

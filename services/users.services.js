@@ -6,21 +6,24 @@ const { models } = require('../libs/sequelize')
 class UsersService {
     constructor() {}
 
-    async create(data) {
-        const hash = await bcrypt.hash(data.password, 10)
+    async find() {
+        const rta = await models.User.findAll({
+            include: ['person'],
+        })
+        if (!rta) {
+            throw boom.notFound('user not found')
+        }
+        return rta
+    }
+
+    async create(user) {
+        const hash = await bcrypt.hash(user.password, 10)
         const newUser = await models.User.create({
-            ...data,
+            ...user,
             password: hash,
         })
         delete newUser.dataValues.password
         return newUser
-    }
-
-    async find() {
-        const rta = await models.User.findAll({
-            include: ['customer'],
-        })
-        return rta
     }
 
     async findOne(id) {

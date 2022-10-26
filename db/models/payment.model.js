@@ -22,12 +22,7 @@ const PaymentSchema = {
 }
 
 class Payment extends Model {
-    static associate(models) {
-        this.hasMany(models.PaymentVoucher, {
-            as: 'paymentvouchers',
-            foreignKey: 'paymentVoucherId',
-        })
-    }
+    static associate(models) {}
 
     static config(sequelize) {
         return {

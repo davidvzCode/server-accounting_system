@@ -1,30 +1,42 @@
 const { Model, DataTypes, Sequelize } = require('sequelize')
 
-const { PAYMENT_TABLE } = require('./payment.model')
+const { ACCOUNT_TABLE } = require('./account.model')
 const { VOUCHER_TABLE } = require('./voucher.model')
 
-const PAYMENT_VOUCHER_TABLE = 'paymentvouchers'
+const VOUCHER_ACCOUNT_TABLE = 'vouchers_accounts'
 
-const PaymentVoucherSchema = {
+const VoucherAccountSchema = {
     id: {
         allowNull: true,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
     },
-    description: {
+    typeAccount: {
+        field: 'type_account',
         allowNull: false,
         type: DataTypes.STRING,
     },
-    total: {
+    value: {
         allowNull: false,
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DOUBLE,
     },
     createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
         field: 'create_at',
         defaultValue: Sequelize.NOW,
+    },
+    accountId: {
+        field: 'account_id',
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        References: {
+            model: ACCOUNT_TABLE,
+            key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
     },
     voucherId: {
         field: 'voucher_id',
@@ -37,37 +49,23 @@ const PaymentVoucherSchema = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
     },
-    paymentId: {
-        field: 'payment_id',
-        allowNull: false,
-        type: DataTypes.INTEGER,
-        References: {
-            model: PAYMENT_TABLE,
-            key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-    },
 }
 
-class PaymentVoucher extends Model {
-    static associate(models) {
-        this.belongsTo(models.Payment, {
-            as: 'payment',
-        })
-        this.belongsTo(models.Voucher, {
-            as: 'voucher',
-        })
-    }
+class Voucher_Account extends Model {
+    static associate(models) {}
 
     static config(sequelize) {
         return {
             sequelize,
-            tableName: PAYMENT_VOUCHER_TABLE,
-            modelName: 'PaymentVoucher',
+            tableName: VOUCHER_ACCOUNT_TABLE,
+            modelName: 'VoucherAccount',
             timestamps: false,
         }
     }
 }
 
-module.exports = { PAYMENT_VOUCHER_TABLE, PaymentVoucherSchema, PaymentVoucher }
+module.exports = {
+    VOUCHER_ACCOUNT_TABLE,
+    VoucherAccountSchema,
+    Voucher_Account,
+}

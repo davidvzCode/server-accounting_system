@@ -62,10 +62,6 @@ class Account extends Model {
         this.belongsTo(models.User, {
             as: 'user',
         })
-        this.hasMany(models.DetailVoucher, {
-            as: 'detailvouchers',
-            foreignKey: 'detailVoucherId',
-        })
     }
 
     static config(sequelize) {
