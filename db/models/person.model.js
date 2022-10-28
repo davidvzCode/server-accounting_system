@@ -19,7 +19,6 @@ const PersonSchema = {
         type: DataTypes.STRING,
     },
     phone: {
-        allowNull: false,
         type: DataTypes.STRING,
     },
     createdAt: {

@@ -13,7 +13,6 @@ const PaymentVoucherSchema = {
         type: DataTypes.INTEGER,
     },
     description: {
-        allowNull: false,
         type: DataTypes.STRING,
     },
     total: {

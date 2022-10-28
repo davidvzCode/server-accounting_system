@@ -8,8 +8,12 @@ const {
     createVoucherSchema,
     getVoucherSchema,
     updateVoucherSchema,
-    addItemSchema,
 } = require('../schemas/voucher.schema')
+
+const {
+    voucher_AccountSchema,
+    deleteAllDeatailSchema,
+} = require('../schemas/voucher-account.schema')
 
 const service = new VoucherService()
 
@@ -47,10 +51,10 @@ router.post(
         }
     }
 )
-
+//[object, object]
 router.post(
-    '/add-item',
-    validatorHadler(addItemSchema, 'body'),
+    '/detail',
+    validatorHadler(voucher_AccountSchema, 'body'),
     async (req, res, next) => {
         try {
             const body = req.body
@@ -62,6 +66,22 @@ router.post(
     }
 )
 
+// router.post(
+//     '/add-item/updateAll',
+//     // validatorHadler(getVoucherSchema, 'params'),
+//     validatorHadler(updateVoucher_AccountSchema, 'body'),
+//     async (req, res, next) => {
+//         try {
+//             // const { id } = req.params
+//             const body = req.body
+//             const voucher_account = await service.updateVC(body)
+//             res.status(201).json(voucher_account)
+//         } catch (error) {
+//             next(error)
+//         }
+//     }
+// )
+
 router.patch(
     '/:id',
     validatorHadler(getVoucherSchema, 'params'),
@@ -70,8 +90,8 @@ router.patch(
         try {
             const { id } = req.params
             const body = req.body
-            const user = await service.update(id, body)
-            res.status(201).json(user)
+            const voucher = await service.update(id, body)
+            res.status(201).json(voucher)
         } catch (error) {
             next(error)
         }
@@ -86,6 +106,21 @@ router.delete(
             const { id } = req.params
             const voucher = await service.delete(id)
             res.status(201).json(voucher)
+        } catch (error) {
+            next(error)
+        }
+    }
+)
+
+// voucherId
+router.delete(
+    '/detail/:id',
+    validatorHadler(getVoucherSchema, 'params'),
+    async (req, res, next) => {
+        try {
+            const { id } = req.params
+            const voucher_account = await service.deleteAllDetail(id)
+            res.status(201).json(voucher_account)
         } catch (error) {
             next(error)
         }

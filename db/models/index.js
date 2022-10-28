@@ -2,7 +2,7 @@ const { User, UserSchema } = require('./user.model')
 const { Person, PersonSchema } = require('./person.model')
 const { Account, AcountSchema } = require('./account.model')
 const { Voucher, VoucherSchema } = require('./voucher.model')
-const { Daybook, DaybookSchema } = require('./daybook.model')
+const { Journal, JournalSchema } = require('./journal.model')
 const {
     Voucher_Account,
     VoucherAccountSchema,
@@ -18,7 +18,7 @@ function setupModels(sequelize) {
     Person.init(PersonSchema, Person.config(sequelize))
     Account.init(AcountSchema, Account.config(sequelize))
     Voucher.init(VoucherSchema, Voucher.config(sequelize))
-    Daybook.init(DaybookSchema, Daybook.config(sequelize))
+    Journal.init(JournalSchema, Journal.config(sequelize))
     Payment.init(PaymentSchema, Payment.config(sequelize))
 
     Voucher_Account.init(
@@ -31,7 +31,7 @@ function setupModels(sequelize) {
     Person.associate(sequelize.models)
     Account.associate(sequelize.models)
     Voucher.associate(sequelize.models)
-    Daybook.associate(sequelize.models)
+    Journal.associate(sequelize.models)
     Payment.associate(sequelize.models)
 }
 

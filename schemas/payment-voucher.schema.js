@@ -6,12 +6,14 @@ const total = Joi.number().min(0)
 const voucherId = Joi.number().integer()
 const paymentId = Joi.number().integer()
 
-const createPaymentVoucherSchema = Joi.object({
-    description: description.required(),
+const createPaymentVoucherSchema = Joi.object().keys({
+    description,
     total: total.required(),
     paymentId: paymentId.required(),
     voucherId: voucherId.required(),
 })
+
+const payment_voucherSchema = Joi.array().items(createPaymentVoucherSchema)
 
 const updatePaymentVoucherSchema = Joi.object({
     description,
@@ -28,4 +30,5 @@ module.exports = {
     createPaymentVoucherSchema,
     updatePaymentVoucherSchema,
     getPaymentVoucherSchema,
+    payment_voucherSchema,
 }

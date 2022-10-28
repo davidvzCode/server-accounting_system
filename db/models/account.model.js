@@ -19,6 +19,7 @@ const AcountSchema = {
     account: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: true,
     },
     signe: {
         allowNull: true,
@@ -26,16 +27,13 @@ const AcountSchema = {
     },
     typeAccount: {
         field: 'type_account',
-        allowNull: true,
         type: DataTypes.STRING,
     },
     typeState: {
         field: 'type_state',
-        allowNull: true,
         type: DataTypes.STRING,
     },
     total: {
-        allowNull: false,
         type: DataTypes.DECIMAL,
     },
     createdAt: {

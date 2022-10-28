@@ -30,7 +30,6 @@ const UserSchema = {
     },
     urlPerfil: {
         field: 'url_perfil',
-        allowNull: true,
         type: DataTypes.STRING,
     },
     createdAt: {

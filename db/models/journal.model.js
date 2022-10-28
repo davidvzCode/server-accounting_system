@@ -1,9 +1,9 @@
 const { Model, DataTypes, Sequelize } = require('sequelize')
 
 const { VOUCHER_TABLE } = require('./voucher.model')
-const DAYBOOK_TABLE = 'daybooks'
+const JOURNAL_TABLE = 'journal'
 
-const DaybookSchema = {
+const JournalSchema = {
     id: {
         allowNull: true,
         autoIncrement: true,
@@ -33,7 +33,7 @@ const DaybookSchema = {
     },
 }
 
-class Daybook extends Model {
+class Journal extends Model {
     static associate(models) {
         this.belongsTo(models.Voucher, {
             as: 'voucher',
@@ -43,11 +43,11 @@ class Daybook extends Model {
     static config(sequelize) {
         return {
             sequelize,
-            tableName: DAYBOOK_TABLE,
-            modelName: 'Daybook',
+            tableName: JOURNAL_TABLE,
+            modelName: 'Journal',
             timestamps: false,
         }
     }
 }
 
-module.exports = { DAYBOOK_TABLE, DaybookSchema, Daybook }
+module.exports = { JOURNAL_TABLE, JournalSchema, Journal }

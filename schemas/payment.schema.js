@@ -15,4 +15,8 @@ const getPaymentSchema = Joi.object({
     id: id.required(),
 })
 
-module.exports = { createPaymentSchema, getPaymentSchema, updatePaymentSchema }
+module.exports = {
+    createPaymentSchema,
+    getPaymentSchema,
+    updatePaymentSchema,
+}

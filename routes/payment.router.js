@@ -9,6 +9,11 @@ const {
     updatePaymentSchema,
 } = require('../schemas/payment.schema')
 
+const {
+    updatePaymentVoucherSchema,
+    payment_voucherSchema,
+} = require('../schemas/payment-voucher.schema')
+
 const service = new PaymentService()
 
 router.get('/', async (req, res) => {
@@ -44,6 +49,20 @@ router.post(
     }
 )
 
+router.post(
+    '/add-voucher',
+    validatorHadler(payment_voucherSchema, 'body'),
+    async (req, res, next) => {
+        try {
+            const body = req.body
+            const payment_voucher = await service.addItem(body)
+            res.status(201).json(payment_voucher)
+        } catch (error) {
+            next(error)
+        }
+    }
+)
+
 router.patch(
     '/:id',
     validatorHadler(getPaymentSchema, 'params'),
@@ -60,6 +79,22 @@ router.patch(
     }
 )
 
+// router.patch(
+//     'add-item/:id',
+//     validatorHadler(getPaymentSchema, 'params'),
+//     validatorHadler(updatePaymentVoucherSchema, 'body'),
+//     async (req, res, next) => {
+//         try {
+//             const { id } = req.params
+//             const body = req.body
+//             const payment_voucher = await service.updatePV(id, body)
+//             res.status(201).json(payment_voucher)
+//         } catch (error) {
+//             next(error)
+//         }
+//     }
+// )
+
 router.delete(
     '/:id',
     validatorHadler(getPaymentSchema, 'params'),
@@ -67,6 +102,20 @@ router.delete(
         try {
             const { id } = req.params
             const payment = await service.delete(id)
+            res.status(201).json(payment)
+        } catch (error) {
+            next(error)
+        }
+    }
+)
+
+router.delete(
+    '/voucher/:id',
+    validatorHadler(getPaymentSchema, 'params'),
+    async (req, res, next) => {
+        try {
+            const { id } = req.params
+            const payment = await service.deleteAllDetail(id)
             res.status(201).json(payment)
         } catch (error) {
             next(error)
