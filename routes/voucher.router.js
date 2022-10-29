@@ -17,13 +17,18 @@ const {
 
 const service = new VoucherService()
 
-router.get('/', async (req, res) => {
-    const voucher = await service.find()
-    res.json(voucher)
-})
+router.get(
+    '/',
+    //passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        const voucher = await service.find()
+        res.json(voucher)
+    }
+)
 
 router.get(
     '/:id',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(getVoucherSchema, 'params'),
     async (req, res, next) => {
         try {
@@ -54,6 +59,7 @@ router.post(
 //[object, object]
 router.post(
     '/detail',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(voucher_AccountSchema, 'body'),
     async (req, res, next) => {
         try {
@@ -84,6 +90,7 @@ router.post(
 
 router.patch(
     '/:id',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(getVoucherSchema, 'params'),
     validatorHadler(updateVoucherSchema, 'body'),
     async (req, res, next) => {
@@ -100,6 +107,7 @@ router.patch(
 
 router.delete(
     '/:id',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(getVoucherSchema, 'params'),
     async (req, res, next) => {
         try {
@@ -115,6 +123,7 @@ router.delete(
 // voucherId
 router.delete(
     '/detail/:id',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(getVoucherSchema, 'params'),
     async (req, res, next) => {
         try {

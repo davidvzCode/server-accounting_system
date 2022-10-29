@@ -3,9 +3,9 @@ const boom = require('@hapi/boom')
 const { models } = require('../libs/sequelize')
 const sequelize = require('../libs/sequelize')
 
-const JournalService = require('./journal.services')
+const ReportsService = require('./reports.services')
 
-const journalS = new JournalService()
+const reportS = new ReportsService()
 
 class VoucherService {
     async find() {
@@ -19,7 +19,7 @@ class VoucherService {
     }
 
     async create(voucher) {
-        let nfolio = await journalS.findbyNfolio()
+        let nfolio = await reportS.findbyNfolio()
         nfolio++
         console.log(voucher)
         const newVoucher = await models.Voucher.create(

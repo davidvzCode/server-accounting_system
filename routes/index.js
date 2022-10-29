@@ -5,7 +5,7 @@ const accountRouter = require('./accounts.router')
 const personRouter = require('./person.router')
 const voucherRouter = require('./voucher.router')
 const paymentRouter = require('./payment.router')
-const journalRouter = require('./journal.router')
+const reportsRouter = require('./reports.router')
 const authRouter = require('./auth.router')
 
 function routerApi(app) {
@@ -16,7 +16,7 @@ function routerApi(app) {
     router.use('/person', personRouter)
     router.use('/voucher', voucherRouter)
     router.use('/account', accountRouter)
-    router.use('/journal', journalRouter)
+    router.use('/reports', reportsRouter)
     router.use('/payment', paymentRouter)
 }
 

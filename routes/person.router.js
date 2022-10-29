@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const passport = require('passport')
 
 const PersonService = require('../services/person.services')
 const validatorHadler = require('../middleware/validator.handler')
@@ -11,13 +12,18 @@ const {
 
 const service = new PersonService()
 
-router.get('/', async (req, res) => {
-    const person = await service.find()
-    res.json(person)
-})
+router.get(
+    '/',
+    //passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        const person = await service.find()
+        res.json(person)
+    }
+)
 
 router.get(
     '/:id',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(getPersonSchema, 'params'),
     async (req, res, next) => {
         try {
@@ -32,6 +38,7 @@ router.get(
 
 router.post(
     '/',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(createPersonSchema, 'body'),
     async (req, res, next) => {
         try {
@@ -46,6 +53,7 @@ router.post(
 
 router.patch(
     '/:id',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(getPersonSchema, 'params'),
     validatorHadler(updatePersonSchema, 'body'),
     async (req, res, next) => {
@@ -62,6 +70,7 @@ router.patch(
 
 router.delete(
     '/:id',
+    //passport.authenticate('jwt', { session: false }),
     validatorHadler(getPersonSchema, 'params'),
     async (req, res, next) => {
         try {
