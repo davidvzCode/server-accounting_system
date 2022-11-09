@@ -1,6 +1,8 @@
 'use strict'
 const { USER_TABLE } = require('../models/user.model')
+
 const bcrypt = require('bcrypt')
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {

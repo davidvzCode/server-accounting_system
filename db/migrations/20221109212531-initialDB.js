@@ -14,6 +14,8 @@ const {
 } = require('../models/payment-voucher.model')
 const { JOURNAL_TABLE, JournalSchema } = require('../models/journal.model')
 
+const { DataTypes } = require('sequelize')
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
