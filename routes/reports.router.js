@@ -3,7 +3,7 @@ const router = express.Router()
 const passport = require('passport')
 const validatorHadler = require('../middleware/validator.handler')
 
-const { searchJournalSchema } = requier('../schemas/reports.schema.js')
+const { searchJournalSchema } = require('../schemas/reports.schema')
 const ReportsService = require('../services/reports.services')
 
 const serviceR = new ReportsService()
