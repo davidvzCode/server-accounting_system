@@ -6,12 +6,15 @@ module.exports = {
         await queryInterface.bulkInsert(PAYMENT_TABLE, [
             {
                 name: 'Efectivo',
+                create_at: new Date(),
             },
             {
                 name: 'Cheque',
+                create_at: new Date(),
             },
             {
                 name: 'Retenciones',
+                create_at: new Date(),
             },
         ])
     },
