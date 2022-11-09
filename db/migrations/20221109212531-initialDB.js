@@ -3,7 +3,7 @@ const { USER_TABLE, UserSchema } = require('../models/user.model')
 const { PERSON_TABLE, PersonSchema } = require('../models/person.model')
 const { ACCOUNT_TABLE, AcountSchema } = require('../models/account.model')
 const { PAYMENT_TABLE, PaymentSchema } = require('../models/payment.model')
-const { VOUCHER_TABLE, VoucherSchema } = require('../models/voucher.model')
+const { VOUCHER_TABLE } = require('../models/voucher.model')
 const {
     VOUCHER_ACCOUNT_TABLE,
     VoucherAccountSchema,
@@ -21,7 +21,55 @@ module.exports = {
         await queryInterface.createTable(PERSON_TABLE, PersonSchema)
         await queryInterface.createTable(ACCOUNT_TABLE, AcountSchema)
         await queryInterface.createTable(PAYMENT_TABLE, PaymentSchema)
-        await queryInterface.createTable(VOUCHER_TABLE, VoucherSchema)
+        await queryInterface.createTable(VOUCHER_TABLE, {
+            id: {
+                allowNull: true,
+                autoIncrement: true,
+                primaryKey: true,
+                type: DataTypes.INTEGER,
+            },
+            typeVoucher: {
+                field: 'type_voucher',
+                allowNull: false,
+                type: DataTypes.STRING,
+            },
+            stateInitial: {
+                field: 'state_initial',
+                allowNull: false,
+                type: DataTypes.BOOLEAN,
+            },
+            date: {
+                allowNull: true,
+                type: DataTypes.DATE,
+            },
+            beneficiary: {
+                allowNull: true,
+                type: DataTypes.STRING,
+            },
+            dniRuc: {
+                field: 'dni_ruc',
+                allowNull: true,
+                type: DataTypes.STRING,
+            },
+            sum: {
+                allowNull: false,
+                type: DataTypes.STRING,
+            },
+            concept: {
+                allowNull: false,
+                type: DataTypes.STRING,
+            },
+            bank: {
+                allowNull: false,
+                type: DataTypes.STRING,
+            },
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                field: 'create_at',
+                defaultValue: Sequelize.NOW,
+            },
+        })
         await queryInterface.createTable(
             VOUCHER_ACCOUNT_TABLE,
             VoucherAccountSchema
