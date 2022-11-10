@@ -14,7 +14,7 @@ const service = new AccountService()
 
 router.get(
     '/',
-    passport.authenticate('jwt', { session: false }),
+    //passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         const account = await service.find()
         res.json(account)
