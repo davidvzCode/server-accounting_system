@@ -84,13 +84,13 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable(USER_TABLE)
         await queryInterface.dropTable(PERSON_TABLE)
+        await queryInterface.dropTable(VOUCHER_ACCOUNT_TABLE)
+        await queryInterface.dropTable(PAYMENT_VOUCHER_TABLE)
+        await queryInterface.dropTable(USER_TABLE)
         await queryInterface.dropTable(ACCOUNT_TABLE)
         await queryInterface.dropTable(PAYMENT_TABLE)
         await queryInterface.dropTable(VOUCHER_TABLE)
-        await queryInterface.dropTable(VOUCHER_ACCOUNT_TABLE)
-        await queryInterface.dropTable(PAYMENT_VOUCHER_TABLE)
         await queryInterface.dropTable(JOURNAL_TABLE)
     },
 }
