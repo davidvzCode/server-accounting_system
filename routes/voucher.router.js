@@ -8,6 +8,7 @@ const {
     createVoucherSchema,
     getVoucherSchema,
     updateVoucherSchema,
+    getAllVoucherSchema,
 } = require('../schemas/voucher.schema')
 
 const {
@@ -20,8 +21,9 @@ const service = new VoucherService()
 router.get(
     '/',
     //passport.authenticate('jwt', { session: false }),
+    validatorHadler(getAllVoucherSchema, 'query'),
     async (req, res) => {
-        const voucher = await service.find()
+        const voucher = await service.find(req.query)
         res.json(voucher)
     }
 )
@@ -88,7 +90,24 @@ router.post(
 //     }
 // )
 
-router.patch(
+// router.patch(
+//     '/:id',
+//     //passport.authenticate('jwt', { session: false }),
+//     validatorHadler(getVoucherSchema, 'params'),
+//     validatorHadler(updateVoucherSchema, 'body'),
+//     async (req, res, next) => {
+//         try {
+//             const { id } = req.params
+//             const body = req.body
+//             const voucher = await service.update(id, body)
+//             res.status(201).json(voucher)
+//         } catch (error) {
+//             next(error)
+//         }
+//     }
+// )
+
+router.put(
     '/:id',
     //passport.authenticate('jwt', { session: false }),
     validatorHadler(getVoucherSchema, 'params'),

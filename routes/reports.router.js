@@ -9,7 +9,7 @@ const ReportsService = require('../services/reports.services')
 const serviceR = new ReportsService()
 
 router.get(
-    '/',
+    '/journal',
     //passport.authenticate('jwt', { session: false }),
     validatorHadler(searchJournalSchema, 'query'),
     async (req, res, next) => {
@@ -25,6 +25,7 @@ router.get(
 router.get(
     '/mayores',
     //passport.authenticate('jwt', { session: false }),
+    validatorHadler(searchJournalSchema, 'query'),
     async (req, res, next) => {
         try {
             const mayores = await serviceR.mayores()

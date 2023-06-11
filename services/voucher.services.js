@@ -1,17 +1,57 @@
 const boom = require('@hapi/boom')
 
-const { models } = require('../libs/sequelize')
-const sequelize = require('../libs/sequelize')
+const Sequelize = require('../libs/sequelize')
 
+const { Op } = require('sequelize')
 const ReportsService = require('./reports.services')
+const PaymentService = require('./payment.services')
 
 const reportS = new ReportsService()
+const paymentService = new PaymentService()
 
 class VoucherService {
-    async find() {
-        const rta = await models.Voucher.findAll({
-            include: ['items_accounts', 'items_payments'],
-        })
+    async find(query) {
+        const options = {
+            where: {},
+            include: ['items_accounts'],
+            order: [],
+        }
+        const { search, orderBy, order, limit, offset } = query
+
+        if (limit && offset) {
+            options.limit = limit
+            options.offset = offset
+        }
+
+        if (order && orderBy) {
+            options.order.push([orderBy, order])
+        }
+        if (search) {
+            options.where = {
+                [Op.or]: [
+                    Sequelize.where(
+                        Sequelize.fn('lower', Sequelize.col('concept')),
+                        {
+                            [Op.like]: `%${search}%`,
+                        }
+                    ),
+                    Sequelize.where(
+                        Sequelize.fn('lower', Sequelize.col('beneficiary')),
+                        {
+                            [Op.like]: `%${search}%`,
+                        }
+                    ),
+                    {
+                        dniRuc: {
+                            [Op.like]: `%${search}%`,
+                        },
+                    },
+                ],
+            }
+        }
+
+        const rta = await Sequelize.models.Voucher.findAndCountAll(options)
+        rta.count = rta.rows.length
         if (!rta) {
             throw boom.notFound('voucher not found')
         }
@@ -19,44 +59,69 @@ class VoucherService {
     }
 
     async create(voucher) {
-        let nfolio = await reportS.findbyNfolio()
-        nfolio++
-        console.log(voucher)
-        const newVoucher = await models.Voucher.create(
-            {
-                ...voucher,
-                journal: {
-                    nfolio,
-                },
-            },
-            { include: 'journal' }
-        )
-        return newVoucher
-    }
-
-    async addItem(data) {
-        const t = await sequelize.transaction()
         try {
-            const newItem = await models.VoucherAccount.bulkCreate(data, {
-                transaction: t,
+            return await Sequelize.transaction(async (t) => {
+                let nfolio = await reportS.findbyNfolio()
+                nfolio++
+                const arrObjDetail = voucher.arrObjDetail
+                const arrObjPayment = voucher.arrObjPayment
+                delete voucher.arrObjDetail
+                delete voucher.arrObjPayment
+                const newVoucher = await Sequelize.models.Voucher.create(
+                    {
+                        ...voucher,
+                        journal: {
+                            nfolio,
+                        },
+                    },
+                    { include: 'journal' },
+                    {
+                        transaction: t,
+                    }
+                )
+                const id = newVoucher.dataValues.id
+                await this.addItem(id, arrObjDetail)
+                await paymentService.addItem(id, arrObjPayment)
+                return newVoucher
             })
-            await t.commit()
-
-            return newItem
         } catch (error) {
-            await t.rollback()
             throw boom.notFound('Error')
         }
     }
 
-    async updateVC(objs) {
-        const t = await sequelize.transaction()
+    async addItem(voucherId, data) {
         try {
-            for (let i = 0; i < objs.length; i++) {
-                const voucher_account = await models.VoucherAccount.findByPk(
-                    objs[i].id
-                )
-                await voucher_account.update(objs[i], {
+            const detail = []
+            for (const det of data) {
+                const aux = {
+                    ...det,
+                    voucherId,
+                }
+                detail.push(aux)
+            }
+            const newItem = await Sequelize.models.VoucherAccount.bulkCreate(
+                detail
+            )
+
+            return newItem
+        } catch (error) {
+            throw boom.notFound('Error')
+        }
+    }
+
+    async updateVC(id, objs) {
+        const t = await Sequelize.transaction()
+        try {
+            for (const vc of objs) {
+                const { accountId } = vc
+                const voucher_account =
+                    await Sequelize.models.VoucherAccount.findOne({
+                        where: {
+                            voucherId: id,
+                            accountId,
+                        },
+                    })
+                await voucher_account.update(vc, {
                     transaction: t,
                 })
             }
@@ -69,9 +134,9 @@ class VoucherService {
     }
 
     async deleteAllDetail(id) {
-        const t = await sequelize.transaction()
+        const t = await Sequelize.transaction()
         try {
-            await models.VoucherAccount.destroy({
+            await Sequelize.models.VoucherAccount.destroy({
                 where: {
                     voucherId: id,
                 },
@@ -85,7 +150,7 @@ class VoucherService {
     }
 
     async findOne(id) {
-        const voucher = await models.Voucher.findByPk(id, {
+        const voucher = await Sequelize.models.Voucher.findByPk(id, {
             include: ['items_accounts', 'items_payments'],
         })
         if (!voucher) {
@@ -94,16 +159,112 @@ class VoucherService {
         return voucher
     }
 
+    async findOneVC(id, accountId) {
+        const VoucherAccount = await Sequelize.models.VoucherAccount.findOne({
+            where: {
+                voucherId: id,
+                accountId,
+            },
+        })
+        if (!VoucherAccount) {
+            throw boom.notFound('voucher account not found')
+        }
+        return VoucherAccount
+    }
+
     async update(id, changes) {
-        const voucher = await this.findOne(id)
-        const rta = await voucher.update(changes)
-        return rta
+        try {
+            return await Sequelize.transaction(async (t) => {
+                const voucher = await this.findOne(id)
+                const {
+                    typeVoucher,
+                    stateInitial,
+                    date,
+                    beneficiary,
+                    dniRuc,
+                    sum,
+                    concept,
+                    bank,
+                    arrObjAddDetail,
+                    arrObjUpdateDetail,
+                    arrObjDeleteDetail,
+                    arrObjAddPayment,
+                    arrObjUpdatePayment,
+                    arrObjDeletePayment,
+                } = changes
+                const newVoucher = {
+                    typeVoucher,
+                    stateInitial,
+                    date,
+                    beneficiary,
+                    dniRuc,
+                    sum,
+                    concept,
+                    bank,
+                }
+                const rta = await voucher.update(newVoucher, {
+                    transaction: t,
+                })
+
+                if (arrObjAddDetail.length > 0)
+                    await this.addItem(id, arrObjAddDetail)
+                if (arrObjAddPayment.length > 0)
+                    await paymentService.addItem(id, arrObjAddPayment)
+
+                //update
+                if (arrObjUpdateDetail.length > 0)
+                    await this.updateVC(id, arrObjUpdateDetail)
+                if (arrObjUpdatePayment.length > 0) {
+                    for (const payment of arrObjUpdatePayment) {
+                        await paymentService.updatePV(id, payment)
+                    }
+                }
+
+                //delete
+                if (arrObjDeleteDetail.length > 0) {
+                    for (const idDetail of arrObjDeleteDetail) {
+                        await this.deleteVC(id, idDetail)
+                    }
+                }
+                if (arrObjDeletePayment.length > 0) {
+                    for (const idPayment of arrObjDeletePayment) {
+                        await paymentService.deletePV(id, idPayment)
+                    }
+                }
+                return {
+                    voucherId: id,
+                }
+            })
+        } catch (error) {
+            throw boom.notFound(error)
+        }
     }
 
     async delete(id) {
-        const voucher = await this.findOne(id)
-        await voucher.destroy()
-        return { id }
+        try {
+            const res = await Sequelize.transaction(async (t) => {
+                const voucher = await this.findOne(id)
+                await voucher.destroy()
+                await this.deleteAllDetail(id)
+                return { id }
+            })
+            return res
+        } catch (error) {
+            throw boom.notFound('Error')
+        }
+    }
+
+    async deleteVC(id, idAccount) {
+        try {
+            const res = await Sequelize.transaction(async (t) => {
+                const voucherAccount = await this.findOneVC(id, idAccount)
+                await voucherAccount.destroy()
+                return { id }
+            })
+            return res
+        } catch (error) {
+            throw boom.notFound('Error')
+        }
     }
 }
 

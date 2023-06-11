@@ -1,5 +1,5 @@
 const { Model, DataTypes, Sequelize } = require('sequelize')
-
+var moment = require('moment')
 const VOUCHER_TABLE = 'vouchers'
 
 const VoucherSchema = {
@@ -22,6 +22,9 @@ const VoucherSchema = {
     date: {
         allowNull: true,
         type: DataTypes.DATE,
+        get() {
+            return moment(this.getDataValue('date')).format('YYYY-MM-DD')
+        },
     },
     beneficiary: {
         allowNull: true,

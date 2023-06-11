@@ -17,21 +17,35 @@ class PaymentService {
         return newPayment
     }
 
-    async addItem(data) {
-        const t = await sequelize.transaction()
+    async addItem(id, data) {
+        //const t = await sequelize.transaction()
         try {
-            const newItem = await models.PaymentVoucher.bulkCreate(data, {
-                transaction: t,
-            })
+            const paymentDetail = []
+            for (const det of data) {
+                const aux = {
+                    ...det,
+                    voucherId: id,
+                }
+                paymentDetail.push(aux)
+            }
+            const newItem = await models.PaymentVoucher.bulkCreate(
+                paymentDetail
+            )
             return newItem
         } catch (error) {
-            await t.rollback()
+            //await t.rollback()
             throw boom.notFound('Error')
         }
     }
 
     async updatePV(id, changes) {
-        const payment_voucher = await models.PaymentVoucher.findByPk(id)
+        const { paymentId } = changes
+        const payment_voucher = await models.PaymentVoucher.findOne({
+            where: {
+                voucherId: id,
+                paymentId,
+            },
+        })
         if (!payment_voucher) {
             throw boom.notFound('Payment-Voucher not found')
         }
@@ -47,6 +61,19 @@ class PaymentService {
         return payment
     }
 
+    async findOnePV(id, paymentId) {
+        const paymentVoucher = await models.PaymentVoucher.findOne({
+            where: {
+                voucherId: id,
+                paymentId,
+            },
+        })
+        if (!paymentVoucher) {
+            throw boom.notFound('Payment not found')
+        }
+        return paymentVoucher
+    }
+
     async update(id, changes) {
         const payment = await this.findOne(id)
         const rta = await payment.update(changes)
@@ -57,6 +84,16 @@ class PaymentService {
         const payment = await this.findOne(id)
         await payment.destroy()
         return { id }
+    }
+
+    async deletePV(id, idPayment) {
+        try {
+            const paymentVoucher = await this.findOnePV(id, idPayment)
+            await paymentVoucher.destroy()
+            return { id }
+        } catch (error) {
+            throw boom.notFound(`Payment with ${id} not delete`)
+        }
     }
 
     async deleteAllDetail(id) {

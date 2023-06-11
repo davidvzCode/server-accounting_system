@@ -8,16 +8,38 @@ const {
     createAccountSchema,
     getAccountSchema,
     updateAccountSchema,
+    getAllAccountSchema,
+    atocompleteVoucherSchema,
 } = require('../schemas/account.schema')
 
 const service = new AccountService()
 
 router.get(
     '/',
+    validatorHadler(getAllAccountSchema, 'query'),
     //passport.authenticate('jwt', { session: false }),
-    async (req, res) => {
-        const account = await service.find()
-        res.json(account)
+    async (req, res, next) => {
+        try {
+            const account = await service.find(req.query)
+            res.json(account)
+        } catch (error) {
+            next(error)
+        }
+    }
+)
+
+router.get(
+    '/autocomplete/:search',
+    //passport.authenticate('jwt', { session: false }),
+    validatorHadler(atocompleteVoucherSchema, 'params'),
+    async (req, res, next) => {
+        try {
+            const { search } = req.params
+            const account = await service.autocomplete(search)
+            res.json(account)
+        } catch (error) {
+            next(error)
+        }
     }
 )
 

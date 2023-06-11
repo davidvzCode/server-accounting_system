@@ -9,6 +9,20 @@ const typeState = Joi.string()
 const total = Joi.number().min(0)
 const userId = Joi.number().integer()
 
+const search = Joi.string().empty('')
+const orderBy = Joi.string().empty('')
+const order = Joi.string().valid('ASC', 'DESC')
+const limit = Joi.number().integer()
+const offset = Joi.number().integer()
+
+const getAllAccountSchema = Joi.object({
+    search,
+    orderBy,
+    order: order.required(),
+    limit: limit.required(),
+    offset: offset.required(),
+})
+
 const createAccountSchema = Joi.object({
     description: description.required(),
     account: account.required(),
@@ -32,4 +46,14 @@ const getAccountSchema = Joi.object({
     id: id.required(),
 })
 
-module.exports = { createAccountSchema, updateAccountSchema, getAccountSchema }
+const atocompleteVoucherSchema = Joi.object({
+    search: search.required(),
+})
+
+module.exports = {
+    createAccountSchema,
+    updateAccountSchema,
+    getAccountSchema,
+    getAllAccountSchema,
+    atocompleteVoucherSchema,
+}
