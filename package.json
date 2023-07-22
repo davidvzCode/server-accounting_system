@@ -6,7 +6,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "nodemon index.js",
-        "start": "node index.js && sequelize-cli db:migrate",
+        "start": "npm-run-all migrations:run -p node index.js",
         "migrations:generate": "sequelize-cli migration:generate --name",
         "migrations:run": "sequelize-cli db:migrate",
         "migrations:revert": "sequelize-cli db:migrate:undo",
@@ -34,6 +34,7 @@
         "sequelize-cli": "^6.5.1"
     },
     "devDependencies": {
+        "npm-run-all": "^4.1.5",
         "prettier": "^2.7.1"
     }
 }
