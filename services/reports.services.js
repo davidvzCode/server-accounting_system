@@ -16,7 +16,6 @@ class ReportsService {
                 },
             },
         }
-
         const rta = await Sequelize.models.Voucher.findAll(options)
         if (!rta) {
             throw boom.notFound('Journal not found')
@@ -123,14 +122,18 @@ class ReportsService {
             INNER JOIN vouchers_accounts ON vouchers_accounts.voucher_id = vouchers.id
             INNER JOIN accounts ON vouchers_accounts.account_id = accounts.id
             INNER JOIN journal ON journal.voucher_id = vouchers.id
-            ORDER BY accounts.id , vouchers.date
             WHERE
                 DATE(vouchers.date) BETWEEN '${startDate}' AND '${endDate}' 
+                ORDER BY accounts.id , vouchers.date
             `,
             { type: Sequelize.QueryTypes.SELECT }
         )
-        const res = this.structureMayores(rta)
-        return res
+        if(rta.length > 0){
+            const res = this.structureMayores(rta)
+            return res
+        }
+        return []
+        
     }
 
     async structureMayores(data) {

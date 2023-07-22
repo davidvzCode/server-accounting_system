@@ -66,7 +66,7 @@ const VoucherSchema = {
             if (this.items_accounts) {
                 if (this.items_accounts.length > 0) {
                     return this.items_accounts.reduce((total, item) => {
-                        return total + item.VoucherAccount.value
+                        return total + (item.VoucherAccount.typeAccount == 'Debe' ? item.VoucherAccount.value : 0)
                     }, 0)
                 }
             }

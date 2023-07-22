@@ -28,7 +28,7 @@ router.get(
     validatorHadler(searchJournalSchema, 'query'),
     async (req, res, next) => {
         try {
-            const mayores = await serviceR.mayores()
+            const mayores = await serviceR.mayores(req.query)
             res.json(mayores)
         } catch (error) {
             next(error)
