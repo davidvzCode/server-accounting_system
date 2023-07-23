@@ -4,9 +4,9 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "nodemon index.js",
-        "start": "npm-run-all migrations:run -p node index.js",
+        "start": "node index.js",
+        "test": "npm-run-all --parallel start migrations:run",
         "migrations:generate": "sequelize-cli migration:generate --name",
         "migrations:run": "sequelize-cli db:migrate",
         "migrations:revert": "sequelize-cli db:migrate:undo",
